@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/rent_apartments_watchdog_bot?useUnicode=true&characterEncoding=utf-8
+    username: postgres
+    password: 1234
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        order_inserts: true
+        jdbc:
+          batch_size: 15
+bot:
+  token: ${BOT_TOKEN}
+  username: rent_apartments_watchdog_bot
