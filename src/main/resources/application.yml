@@ -22,6 +22,7 @@ bot:
   username: ${BOT_USERNAME}
 
 watchdogs:
+  check-delay: 1_800_000 # 30 minutes
   expats:
     base-url: https://www.expats.cz
     search-url: /praguerealestate/apartments/for-rent/prague-region?re_advert_subtype=2-plus-kk-1-bedroom,2-plus-1-1-bedroom,3-plus-kk-2-bedrooms&re_furnished=yes-furnished,partially&advert_price_to=30000&p=1
