@@ -2,11 +2,13 @@ package io.github.olxmute.watchdog.expats
 
 import io.github.olxmute.watchdog.bot.MessageSender
 import io.github.olxmute.watchdog.config.WatchdogsConfig
+import io.github.olxmute.watchdog.dto.ExpatsPropertyExtendedInfo
 import io.github.olxmute.watchdog.persistence.entity.ExpatsApartment
 import io.github.olxmute.watchdog.persistence.repository.ExpatsApartmentRepository
 import mu.KotlinLogging
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.data.domain.Sort.Direction
 import org.springframework.stereotype.Service
 
 @Service
@@ -23,7 +25,7 @@ class ExpatsWatchdogFacade(
             .map { it.copy(url = watchdogsConfig.expats.baseUrl + it.url) }
 
         val persistedExpatsPropertyItems = expatsApartmentRepository.findAll(
-            PageRequest.of(0, foundExpatsProperties.size, Sort.by("createdDate"))
+            PageRequest.of(0, foundExpatsProperties.size, Sort.by(Direction.DESC, "createdDate"))
         )
 
         val newApartments = foundExpatsProperties - persistedExpatsPropertyItems
@@ -58,6 +60,7 @@ class ExpatsWatchdogFacade(
         val stringBuilder = StringBuilder()
             .appendLine("*${property.name}*").appendLine()
             .appendLine("Price: ${property.priceText}").appendLine()
+            .appendLine("Location: ${property.location}").appendLine()
 
         with(propertyExtendedInfo) {
             with(stringBuilder) {

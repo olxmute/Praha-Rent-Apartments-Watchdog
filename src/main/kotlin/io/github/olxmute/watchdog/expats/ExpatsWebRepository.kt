@@ -1,6 +1,7 @@
 package io.github.olxmute.watchdog.expats
 
 import io.github.olxmute.watchdog.config.WatchdogsConfig
+import io.github.olxmute.watchdog.dto.ExpatsPropertyExtendedInfo
 import io.github.olxmute.watchdog.dto.ExpatsSearchResponseDto
 import org.jsoup.Jsoup
 import org.springframework.stereotype.Repository
@@ -50,14 +51,3 @@ class ExpatsWebRepository(
     }
 
 }
-
-data class ExpatsPropertyExtendedInfo(
-    val images: List<String>,
-    val description: String?,
-    val floor: String?,
-    val usableArea: String?,
-    val gardenArea: String?,
-    val terraceArea: String?,
-    val cellarArea: String?,
-    val moveInDate: String?,
-)

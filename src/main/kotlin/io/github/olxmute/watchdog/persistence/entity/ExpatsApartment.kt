@@ -16,6 +16,7 @@ data class ExpatsApartment(
     val name: String,
     @JsonProperty("price_text")
     val priceText: String,
+    val location: String,
     val url: String
 ) {
     @LastModifiedDate
