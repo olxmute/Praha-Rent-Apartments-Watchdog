@@ -1,7 +1,7 @@
 package io.github.olxmute.watchdog.expats
 
 import io.github.olxmute.watchdog.bot.MessageSender
-import io.github.olxmute.watchdog.dto.ExpatsPropertyExtendedInfo
+import io.github.olxmute.watchdog.dto.ExpatsApartmentExtendedInfo
 import io.github.olxmute.watchdog.persistence.entity.ExpatsApartment
 import io.github.olxmute.watchdog.persistence.repository.ExpatsApartmentRepository
 import mu.KotlinLogging
@@ -35,32 +35,33 @@ class ExpatsWatchdogFacade(
         log.info { "Found new appropriate apartments in expats: ${appropriateApartments.size}" }
 
         appropriateApartments
-            .forEach { (property, extendedInfo) ->
+            .forEach { (apartment, extendedInfo) ->
                 val images = extendedInfo.images.take(10)
-                val messageText = buildMessage(property, extendedInfo)
+                val messageText = buildMessage(apartment, extendedInfo)
 
                 try {
                     messageSender.sendMediaGroupToMe(images, messageText)
+                    log.info { "Sent apartment: ${apartment.url}" }
                 } catch (e: Exception) {
                     log.error(e.message, e)
-                    messageSender.sendMessageToMe("Exception occurred on apartment: ${property.url}\n(\n${e.message}")
+                    messageSender.sendMessageToMe("Exception occurred on apartment: ${apartment.url}\n(\n${e.message}")
                 }
 
-                expatsApartmentRepository.save(property)
+                expatsApartmentRepository.save(apartment)
             }
 
     }
 
     private fun buildMessage(
-        property: ExpatsApartment,
-        propertyExtendedInfo: ExpatsPropertyExtendedInfo
+        apartment: ExpatsApartment,
+        apartmentExtendedInfo: ExpatsApartmentExtendedInfo
     ): String {
         val stringBuilder = StringBuilder()
-            .appendLine("*${property.name}*").appendLine()
-            .appendLine("Price: ${property.priceText}")
-            .appendLine("Location: ${property.location}").appendLine()
+            .appendLine("*${apartment.name}*").appendLine()
+            .appendLine("Price: ${apartment.priceText}")
+            .appendLine("Location: ${apartment.location}").appendLine()
 
-        with(propertyExtendedInfo) {
+        with(apartmentExtendedInfo) {
             with(stringBuilder) {
                 floor?.let { appendLine("Floor: $it") }
                 usableArea?.let { appendLine("Usable area: $it") }
@@ -70,7 +71,7 @@ class ExpatsWatchdogFacade(
                 moveInDate?.let { appendLine("Move-in date: $it") }
             }
         }
-        stringBuilder.appendLine().appendLine(property.url)
+        stringBuilder.appendLine().appendLine(apartment.url)
 
         return stringBuilder.toString()
     }

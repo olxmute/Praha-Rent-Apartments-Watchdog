@@ -1,7 +1,7 @@
 package io.github.olxmute.watchdog.expats
 
 import io.github.olxmute.watchdog.config.WatchdogsConfig
-import io.github.olxmute.watchdog.dto.ExpatsPropertyExtendedInfo
+import io.github.olxmute.watchdog.dto.ExpatsApartmentExtendedInfo
 import io.github.olxmute.watchdog.persistence.entity.ExpatsApartment
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -34,7 +34,7 @@ class ExpatsWebRepository(
             }
     }
 
-    fun findExtendedInfoByUrl(url: String): ExpatsPropertyExtendedInfo {
+    fun findExtendedInfoByUrl(url: String): ExpatsApartmentExtendedInfo {
         val document = Jsoup.connect(url).get()
         val images = document.select(".gallery ul li a")
             .map { watchdogsConfig.expats.baseUrl + it.attr("href") }
@@ -50,7 +50,7 @@ class ExpatsWebRepository(
         val cellarArea = extendedInfo["Cellar area"]
         val moveInDate = extendedInfo["Move-in date"]
 
-        return ExpatsPropertyExtendedInfo(
+        return ExpatsApartmentExtendedInfo(
             images = images,
             floor = floor,
             usableArea = usableArea,

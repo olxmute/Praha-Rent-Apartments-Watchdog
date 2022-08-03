@@ -1,6 +1,6 @@
 package io.github.olxmute.watchdog.dto
 
-data class ExpatsPropertyExtendedInfo(
+data class ExpatsApartmentExtendedInfo(
     val images: List<String>,
     val floor: String?,
     val usableArea: String?,
