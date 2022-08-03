@@ -1,7 +1,6 @@
 package io.github.olxmute.watchdog.expats
 
 import io.github.olxmute.watchdog.bot.MessageSender
-import io.github.olxmute.watchdog.config.WatchdogsConfig
 import io.github.olxmute.watchdog.dto.ExpatsPropertyExtendedInfo
 import io.github.olxmute.watchdog.persistence.entity.ExpatsApartment
 import io.github.olxmute.watchdog.persistence.repository.ExpatsApartmentRepository
@@ -15,20 +14,19 @@ import org.springframework.stereotype.Service
 class ExpatsWatchdogFacade(
     private val expatsWebRepository: ExpatsWebRepository,
     private val messageSender: MessageSender,
-    private val expatsApartmentRepository: ExpatsApartmentRepository,
-    private val watchdogsConfig: WatchdogsConfig
+    private val expatsApartmentRepository: ExpatsApartmentRepository
 ) {
     private val log = KotlinLogging.logger { }
 
     fun process() {
-        val foundExpatsProperties = expatsWebRepository.findAll().properties
-            .map { it.copy(url = watchdogsConfig.expats.baseUrl + it.url) }
+        log.info { "Looking for new apartments in expats..." }
+        val foundExpatsApartments = expatsWebRepository.findAll()
 
-        val persistedExpatsPropertyItems = expatsApartmentRepository.findAll(
-            PageRequest.of(0, foundExpatsProperties.size, Sort.by(Direction.DESC, "createdDate"))
+        val persistedExpatsApartments = expatsApartmentRepository.findAll(
+            PageRequest.of(0, foundExpatsApartments.size, Sort.by(Direction.DESC, "createdDate"))
         )
 
-        val newApartments = foundExpatsProperties - persistedExpatsPropertyItems
+        val newApartments = foundExpatsApartments - persistedExpatsApartments
 
         val appropriateApartments = newApartments
             .associateWith { expatsWebRepository.findExtendedInfoByUrl(it.url) }
@@ -59,7 +57,7 @@ class ExpatsWatchdogFacade(
     ): String {
         val stringBuilder = StringBuilder()
             .appendLine("*${property.name}*").appendLine()
-            .appendLine("Price: ${property.priceText}").appendLine()
+            .appendLine("Price: ${property.priceText}")
             .appendLine("Location: ${property.location}").appendLine()
 
         with(propertyExtendedInfo) {

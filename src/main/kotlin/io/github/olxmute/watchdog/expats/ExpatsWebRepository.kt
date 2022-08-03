@@ -2,30 +2,42 @@ package io.github.olxmute.watchdog.expats
 
 import io.github.olxmute.watchdog.config.WatchdogsConfig
 import io.github.olxmute.watchdog.dto.ExpatsPropertyExtendedInfo
-import io.github.olxmute.watchdog.dto.ExpatsSearchResponseDto
+import io.github.olxmute.watchdog.persistence.entity.ExpatsApartment
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
 import org.springframework.stereotype.Repository
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.postForObject
 
 @Repository
 class ExpatsWebRepository(
-    private val restTemplate: RestTemplate,
     private val watchdogsConfig: WatchdogsConfig
 ) {
 
-    fun findAll(): ExpatsSearchResponseDto {
+    fun findAll(): List<ExpatsApartment> {
         val fullSearchUrl = watchdogsConfig.expats.baseUrl + watchdogsConfig.expats.searchUrl
-        return restTemplate.postForObject(fullSearchUrl)
-            ?: throw RuntimeException("Exception during fetching data from expats.cz")
+
+        val apartments = Jsoup.connect(fullSearchUrl)
+            .get()
+            .select(".property-info .list")[0]
+            .children() as Iterable<Element>
+
+        return apartments.filter { it.attributes().isEmpty }
+            .reversed()
+            .map {
+                val url = it.select("h2 a").attr("href")
+                ExpatsApartment(
+                    id = url.split("/")[4].split("-")[0],
+                    name = it.select("h2").text(),
+                    location = it.select("h3").text(),
+                    priceText = it.select("strong").text(),
+                    url = watchdogsConfig.expats.baseUrl + url
+                )
+            }
     }
 
     fun findExtendedInfoByUrl(url: String): ExpatsPropertyExtendedInfo {
         val document = Jsoup.connect(url).get()
         val images = document.select(".gallery ul li a")
             .map { watchdogsConfig.expats.baseUrl + it.attr("href") }
-
-        val description = document.select(".description").text()
 
         val extendedInfo = document.select(".attributes table tr").associate {
             it.child(0).text() to it.child(1).text()
@@ -40,7 +52,6 @@ class ExpatsWebRepository(
 
         return ExpatsPropertyExtendedInfo(
             images = images,
-            description = description,
             floor = floor,
             usableArea = usableArea,
             gardenArea = gardenArea,
