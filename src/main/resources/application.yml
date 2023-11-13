@@ -2,11 +2,9 @@ spring:
   main:
     web-application-type: none
   datasource:
-    url: jdbc:postgresql://localhost:5432/rent_apartments_watchdog_bot?useUnicode=true&characterEncoding=utf-8
-    username: postgres
-    password: 1234
+    url: jdbc:sqlite:db/praha_rent_apartments_watchdog.sqlite
   jpa:
-    show-sql: true
+    show-sql: false
     open-in-view: false
     hibernate:
       ddl-auto: update
@@ -22,7 +20,7 @@ bot:
   username: ${BOT_USERNAME}
 
 watchdogs:
-  check-delay: 1_800_000 # 30 minutes
+  check-delay: 5 # minutes
   expats:
     base-url: https://www.expats.cz
-    search-url: /praguerealestate/apartments/for-rent/prague-region?re_advert_subtype=2-plus-kk-1-bedroom,2-plus-1-1-bedroom,3-plus-kk-2-bedrooms&re_furnished=yes-furnished,partially&advert_price_to=30000
+    search-url: /praguerealestate/apartments/for-rent/prague-region?re_advert_subtype=2-plus-kk-1-bedroom,2-plus-1-1-bedroom,3-plus-kk-2-bedrooms&re_building_condition=very-good-condition,developer-project,new-construction,renovated&ruian_prague_district=prague-1,prague-2,prague-3,prague-7,prague-8,prague-9&re_furnished=yes-furnished&advert_price_to=30000

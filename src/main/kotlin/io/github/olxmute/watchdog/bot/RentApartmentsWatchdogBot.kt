@@ -9,16 +9,14 @@ import org.telegram.telegrambots.meta.api.objects.Update
 @Component
 class RentApartmentsWatchdogBot(
     private val botConfig: BotConfig,
-) : TelegramLongPollingBot() {
+) : TelegramLongPollingBot(botConfig.token) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
-
-    override fun getBotToken() = botConfig.token
 
     override fun getBotUsername() = botConfig.username
 
     override fun onUpdateReceived(update: Update) {
-        logger.info("Message sent to bot. Chat ID: {}", update.message?.chatId)
+        logger.info("Bot received message from Chat ID: {}", update.message?.chatId)
     }
 
 }

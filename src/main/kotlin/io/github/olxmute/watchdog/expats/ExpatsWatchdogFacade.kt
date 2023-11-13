@@ -50,6 +50,10 @@ class ExpatsWatchdogFacade(
                 expatsApartmentRepository.save(apartment)
             }
 
+        if (appropriateApartments.isNotEmpty()) {
+            log.info { "Finished processing last apartments" }
+        }
+
     }
 
     private fun buildMessage(
@@ -58,17 +62,17 @@ class ExpatsWatchdogFacade(
     ): String {
         val stringBuilder = StringBuilder()
             .appendLine("*${apartment.name}*").appendLine()
-            .appendLine("Price: ${apartment.priceText}")
-            .appendLine("Location: ${apartment.location}").appendLine()
+            .appendLine("*Price:* ${apartment.priceText}")
+            .appendLine("*Location:* ${apartment.location}").appendLine()
 
         with(apartmentExtendedInfo) {
             with(stringBuilder) {
-                floor?.let { appendLine("Floor: $it") }
-                usableArea?.let { appendLine("Usable area: $it") }
-                gardenArea?.let { appendLine("Garden area: $it") }
-                terraceArea?.let { appendLine("Terrace area: $it") }
-                cellarArea?.let { appendLine("Cellar area: $it") }
-                moveInDate?.let { appendLine("Move-in date: $it") }
+                floor?.let { appendLine("*Floor:* $it") }
+                usableArea?.let { appendLine("*Usable area:* $it") }
+                gardenArea?.let { appendLine("*Garden area:* $it") }
+                terraceArea?.let { appendLine("*Terrace area:* $it") }
+                cellarArea?.let { appendLine("*Cellar area:* $it") }
+                moveInDate?.let { appendLine("*Move-in date:* $it") }
             }
         }
         stringBuilder.appendLine().appendLine(apartment.url)

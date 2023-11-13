@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "2.7.2"
-	id("io.spring.dependency-management") version "1.0.12.RELEASE"
-	kotlin("jvm") version "1.6.21"
-	kotlin("plugin.spring") version "1.6.21"
-	kotlin("plugin.jpa") version "1.6.21"
+	id("org.springframework.boot") version "3.1.5"
+	id("io.spring.dependency-management") version "1.1.3"
+	kotlin("jvm") version "1.8.22"
+	kotlin("plugin.spring") version "1.8.22"
+	kotlin("plugin.jpa") version "1.8.22"
 }
 
 group = "io.github.olxmute"
@@ -17,18 +17,20 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	runtimeOnly("org.postgresql:postgresql")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	implementation("org.springframework.retry:spring-retry")
 
-	implementation("org.jsoup:jsoup:1.15.2")
-	implementation("org.telegram:telegrambots-spring-boot-starter:6.1.0")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.hibernate.orm:hibernate-community-dialects")
+	implementation("org.xerial:sqlite-jdbc")
 
-	implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
+	implementation("org.jsoup:jsoup:1.16.2")
+	implementation("org.telegram:telegrambots-spring-boot-starter:6.8.0")
+
+	implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 }
 
 tasks.withType<KotlinCompile> {

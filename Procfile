@@ -1,1 +1,0 @@
-service: java $JAVA_OPTS -jar build/libs/praha-rent-apartments-watchdog-0.0.1-SNAPSHOT.jar --spring.jpa.show-sql=false
