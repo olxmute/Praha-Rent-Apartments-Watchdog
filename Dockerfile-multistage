@@ -1,0 +1,9 @@
+FROM bellsoft/liberica-openjdk-alpine:17 AS BUILD_IMAGE
+WORKDIR /workspace/app
+COPY . .
+RUN ./gradlew clean bootJar
+
+FROM bellsoft/liberica-openjdk-alpine:17
+WORKDIR /app
+COPY --from=BUILD_IMAGE /workspace/app/build/libs/*.jar app.jar
+CMD java $JAVA_OPTS -jar app.jar

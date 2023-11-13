@@ -33,6 +33,12 @@ dependencies {
 	implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 }
 
+tasks {
+	jar {
+		enabled = false
+	}
+}
+
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
