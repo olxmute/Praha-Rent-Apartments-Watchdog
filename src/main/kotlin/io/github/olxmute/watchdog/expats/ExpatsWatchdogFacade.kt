@@ -22,11 +22,7 @@ class ExpatsWatchdogFacade(
         log.info { "Looking for new apartments in expats..." }
         val foundExpatsApartments = expatsWebRepository.findAll()
 
-        val persistedExpatsApartments = expatsApartmentRepository.findAll(
-            PageRequest.of(0, foundExpatsApartments.size, Sort.by(Direction.DESC, "createdDate"))
-        )
-
-        val newApartments = foundExpatsApartments - persistedExpatsApartments
+        val newApartments = findNewApartments(foundExpatsApartments)
 
         val appropriateApartments = newApartments
             .associateWith { expatsWebRepository.findExtendedInfoByUrl(it.url) }
@@ -54,6 +50,22 @@ class ExpatsWatchdogFacade(
             log.info { "Finished processing last apartments" }
         }
 
+    }
+
+    private fun findNewApartments(foundExpatsApartments: List<ExpatsApartment>): List<ExpatsApartment> {
+        val persistedLatestApartments = expatsApartmentRepository.findAll(
+            PageRequest.of(0, foundExpatsApartments.size, Sort.by(Direction.DESC, "createdDate"))
+        )
+
+        val newAdvertisements = foundExpatsApartments - persistedLatestApartments
+        val newAdvertisementIds = newAdvertisements.map { it.id }
+        val alreadyProcessedApartments = expatsApartmentRepository.findAllById(newAdvertisementIds)
+
+        log.info { "Found already processed apartments: ${alreadyProcessedApartments.size}, namely: $alreadyProcessedApartments" }
+
+        val alreadyProcessedIds = alreadyProcessedApartments.map { it.id }
+
+        return newAdvertisements.filter { it.id !in alreadyProcessedIds }
     }
 
     private fun buildMessage(
