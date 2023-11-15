@@ -25,6 +25,7 @@ class ExpatsWatchdogFacade(
         val newApartments = findNewApartments(foundExpatsApartments)
 
         val appropriateApartments = newApartments
+            .filterNot { it.priceText.contains("EUR") && it.priceText.toNumber() > 1300 }
             .associateWith { expatsWebRepository.findExtendedInfoByUrl(it.url) }
             .filterValues { it.images.size > 2 }
 
@@ -91,5 +92,7 @@ class ExpatsWatchdogFacade(
 
         return stringBuilder.toString()
     }
+
+    private fun String.toNumber() = this.filter { it.isDigit() }.toIntOrNull() ?: 0
 
 }
